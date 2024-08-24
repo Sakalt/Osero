@@ -85,16 +85,20 @@
             directions.forEach(dir => {
                 let i = index;
                 let tempFlips = [];
+                let foundOpponent = false;
 
                 while (true) {
                     i += dir;
                     if (i < 0 || i >= size * size || (dir === -1 && i % size === size - 1) || (dir === 1 && i % size === 0)) break;
                     const cell = document.querySelectorAll('.cell')[i];
                     if (cell.classList.contains(currentPlayer)) {
-                        flips.push(...tempFlips);
+                        if (foundOpponent) {
+                            flips.push(...tempFlips);
+                        }
                         break;
                     } else if (cell.classList.contains(currentPlayer === 'black' ? 'white' : 'black')) {
                         tempFlips.push(i);
+                        foundOpponent = true;
                     } else {
                         break;
                     }
