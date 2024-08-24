@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>オセロ</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        #board {
+            display: grid;
+            grid-template-columns: repeat(8, 40px);
+            grid-gap: 1px;
+            margin: 20px auto;
+            max-width: 320px;
+        }
+
+        .cell {
+            width: 40px;
+            height: 40px;
+            background-color: green;
+            cursor: pointer;
+        }
+
+        .cell.black {
+            background-color: black;
+        }
+
+        .cell.white {
+            background-color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>オセロ</h1>
+    <div id="board"></div>
+    <script>
+        const board = document.getElementById('board');
+        const size = 8;
+        let currentPlayer = 'black';
+        let gameOver = false;
+
+        function createBoard() {
+            for (let i = 0; i < size * size; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                cell.addEventListener('click', () => {
+                    if (!gameOver) makeMove(cell);
+                });
+                board.appendChild(cell);
+            }
+            // 初期配置
+            const cells = document.querySelectorAll('.cell');
+            cells[27].classList.add('white');
+            cells[28].classList.add('black');
+            cells[35].classList.add('black');
+            cells[36].classList.add('white');
+        }
+
+        function makeMove(cell) {
+            if (cell.classList.contains('black') || cell.classList.contains('white')) return;
+
+            cell.classList.add(currentPlayer);
+            currentPlayer = currentPlayer === 'black' ? 'white' : 'black';
+            checkGameOver();
+        }
+
+        function checkGameOver() {
+            const cells = document.querySelectorAll('.cell');
+            let blackCount = 0;
+            let whiteCount = 0;
+
+            cells.forEach(cell => {
+                if (cell.classList.contains('black')) blackCount++;
+                if (cell.classList.contains('white')) whiteCount++;
+            });
+
+            if (blackCount + whiteCount === size * size) {
+                gameOver = true;
+                displayWinner();
+            }
+        }
+
+        function displayWinner() {
+            const blackCount = document.querySelectorAll('.cell.black').length;
+            const whiteCount = document.querySelectorAll('.cell.white').length;
+
+            let winner;
+            if (blackCount > whiteCount) {
+                winner = '黒';
+            } else if (whiteCount > blackCount) {
+                winner = '白';
+            } else {
+                winner = '引き分け';
+            }
+
+            alert(`ゲーム終了! 勝者: ${winner}`);
+        }
+
+        createBoard();
+    </script>
+</body>
+</html>
