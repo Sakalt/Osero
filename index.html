@@ -61,11 +61,47 @@
         }
 
         function makeMove(cell) {
+            const index = Array.from(board.children).indexOf(cell);
             if (cell.classList.contains('black') || cell.classList.contains('white')) return;
 
-            cell.classList.add(currentPlayer);
-            currentPlayer = currentPlayer === 'black' ? 'white' : 'black';
-            checkGameOver();
+            const flips = getFlips(index);
+            if (flips.length > 0) {
+                cell.classList.add(currentPlayer);
+                flips.forEach(i => document.querySelectorAll('.cell')[i].classList.add(currentPlayer));
+                currentPlayer = currentPlayer === 'black' ? 'white' : 'black';
+                checkGameOver();
+            }
+        }
+
+        function getFlips(index) {
+            const flips = [];
+            const directions = [
+                -1, 1,            // Left, Right
+                -size, size,      // Up, Down
+                -size-1, size+1,  // Up-Left, Down-Right
+                -size+1, size-1   // Up-Right, Down-Left
+            ];
+
+            directions.forEach(dir => {
+                let i = index;
+                let tempFlips = [];
+
+                while (true) {
+                    i += dir;
+                    if (i < 0 || i >= size * size || (dir === -1 && i % size === size - 1) || (dir === 1 && i % size === 0)) break;
+                    const cell = document.querySelectorAll('.cell')[i];
+                    if (cell.classList.contains(currentPlayer)) {
+                        flips.push(...tempFlips);
+                        break;
+                    } else if (cell.classList.contains(currentPlayer === 'black' ? 'white' : 'black')) {
+                        tempFlips.push(i);
+                    } else {
+                        break;
+                    }
+                }
+            });
+
+            return flips;
         }
 
         function checkGameOver() {
